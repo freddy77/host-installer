@@ -958,8 +958,9 @@ class GPTPartitionTool(PartitionToolBase):
         matchHeader    = re.compile('Number\s+Start \(sector\)\s+End \(sector\)\s+Size\s+Code\s+Name')
         matchPartition = re.compile('^\s+(\d+)\s+(\d+)\s+(\d+)\s+([\d.]+\s+\w+)\s+([0-9A-F]{4})(\s+(.*))?$') # num start end sz typecode name
         matchActive    = re.compile('.*\(legacy BIOS bootable\)')
-        matchId        = re.compile('^Partition GUID code: ([0-9A-F\-]+) ')
-        matchPartUUID  = re.compile('^Partition unique GUID: ([0-9A-F\-]+)$')
+        matchId        = re.compile('(?ms).*^Partition GUID code: ([0-9A-F\-]+) ')
+        matchPartUUID  = re.compile('(?ms).*^Partition unique GUID: ([0-9A-F\-]+)$')
+        matchDellId    = re.compile('.*Exact type match not found for type code DE00;')
         partitions = {}
         lines = out.split('\n')
         gotHeader = False
@@ -989,15 +990,18 @@ class GPTPartitionTool(PartitionToolBase):
         # By active we mean "BIOS bootable"
         for number in partitions:
             out = self.cmdWrap([self.SGDISK, '--attributes=%d:show' % number, self.device])
-            partitions[number]['active'] = matchActive.match(out) and True or False
+            partitions[number]['active'] = bool(matchActive.match(out))
             out = self.cmdWrap([self.SGDISK, '--info=%d' % number, self.device])
-            for line in out.split('\n'):
-                m = matchId.match(line)
+            m = matchPartUUID.match(out)
+            if m:
+                partitions[number]['partuuid'] = m.group(1)
+            if matchDellId.match(out):
+                partitions[number]['id'] = self.ID_EFI_BOOT
+                partitions[number]['partlabel'] = constants.UTILITY_PARTLABEL
+            else:
+                m = matchId.match(out)
                 if m:
                     partitions[number]['id'] = m.group(1)
-                m = matchPartUUID.match(line)
-                if m:
-                    partitions[number]['partuuid'] = m.group(1)
             assert 'id' in partitions[number]
 
         # sgdisk opens the device with O_WRONLY even when not changing anything
