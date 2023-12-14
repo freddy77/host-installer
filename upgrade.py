@@ -310,7 +310,11 @@ class ThirdGenUpgrader(Upgrader):
         progress_callback(97)
 
         # Fix up partition ids to be what the rest of the installer expects
+        old_tool = tool
         tool = PartitionTool(primary_disk)
+        for num in old_tool.utilityPartitions():
+            tool.partitions[num]['id'] = self.ID_EFI_BOOT
+            tool.partitions[num]['partlabel'] = constants.UTILITY_PARTLABEL
         tool.partitions[primary_partnum]['id'] = tool.ID_LINUX
         tool.partitions[backup_partnum]['id'] = tool.ID_LINUX
         tool.commit()
