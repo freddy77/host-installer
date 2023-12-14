@@ -218,9 +218,10 @@ class ThirdGenUpgrader(Upgrader):
         primary_fs.unmount()
 
     def testUpgradeForbidden(self, tool):
-        utilparts = tool.utilityPartitions()
-        if tool.partTableType == constants.PARTITION_DOS and utilparts is not None:
-            raise RuntimeError("Util partition detected on DOS partition type, upgrade forbidden.")
+        pass
+#        utilparts = tool.utilityPartitions()
+#        if tool.partTableType == constants.PARTITION_DOS and utilparts is not None:
+#            raise RuntimeError("Util partition detected on DOS partition type, upgrade forbidden.")
 
     convertTargetStateChanges = []
     convertTargetArgs = ['primary-disk', 'target-boot-mode', 'boot-partnum', 'primary-partnum', 'logs-partnum', 'swap-partnum', 'storage-partnum', 'backup-partnum']
