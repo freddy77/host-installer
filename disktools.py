@@ -921,6 +921,7 @@ class GPTPartitionTool(PartitionToolBase):
     # These are partition type GUIDs
     ID_LINUX_SWAP   = "0657FD6D-A4AB-43C4-84E5-0933C84B4F4F"
     ID_LINUX        = "EBD0A0A2-B9E5-4433-87C0-68B6B72699C7"
+    ID_LINUX_NEW    = "0FC63DAF-8483-4772-8E79-3D69D8477DE4"
     ID_LINUX_LVM    = "E6D6D379-F507-44C2-A23C-238F2A3DF928"
     ID_EFI_BOOT     = "C12A7328-F81F-11D2-BA4B-00A0C93EC93B"
     ID_BIOS_BOOT    = "21686148-6449-6E6F-744E-656564454649"
@@ -929,6 +930,7 @@ class GPTPartitionTool(PartitionToolBase):
     GUID_to_type_code = {
         ID_LINUX_SWAP:   '8200',
         ID_LINUX:        '0700',
+        ID_LINUX_NEW:    '0700',
         ID_LINUX_LVM:    '8e00',
         ID_EFI_BOOT:     'ef00',
         ID_BIOS_BOOT:    'ef02',
